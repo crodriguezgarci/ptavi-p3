@@ -5,33 +5,50 @@
 
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
-from smallsmilhandler import SmallSMILHandler
+import smallsmilhandler
 import sys
+import string
+import os
 
-atributos = {
-            'root-layout': ['width', 'height', 'background-color'],
-            'region': ['id', 'top', 'bottom', 'left', 'right'],
-            'img': ['src', 'region', 'begin', 'dur'],
-            'audio': ['src', 'begin', 'dur'],
-            'textstream': ['src', 'region'] 
-}
+tagsrc = ['img','audio','textstream']
+
+class SmallSMILHandler(ContentHandler):
+
+    def __init__(self, fichero ):
+
+        pass
 
 
 
-def imprimir(tags):
-    for n in range(len(tags)):
-        print tags[n]['etiqueta'],
-       
-        for atributo in atributos[tags[n]['etiqueta']]:
-            print "\t" + atributo + '="' + tags[n][atributo]+ '"',
+
+
+
+def imprimir(tags, atributos):
+
+    for tag in tags:
+        print tag['etiqueta'],
+        for atributo in atributos[tag['etiqueta']]:
+            if tag[atributo] != "":
+                print "\t" + atributo + '="' + tag[atributo]+ '"',
         print "\n"
-    
+
+def do_local(tags):
+    for tag in tags:
+        if tag['etiqueta'] in tagsrc:
+            link = tag["src"]
+            if link.startswith('http://'):
+                os.system("wget -q " + link)
+                link = link.split("/")[-1]
+                tag["src"] = link
+
 
 if __name__ == "__main__":
 
     parser = make_parser()
-    SmallSMILHandler = SmallSMILHandler()
+    SmallSMILHandler = smallsmilhandler.SmallSMILHandler()
     parser.setContentHandler(SmallSMILHandler)
     parser.parse(open(sys.argv[1], "r"))
     tags = SmallSMILHandler.get_tags()
-    imprimir(tags)
+    imprimir(tags, SmallSMILHandler.atributos)
+    do_local(tags)
+    imprimir(tags, SmallSMILHandler.atributos)
