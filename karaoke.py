@@ -10,45 +10,43 @@ import sys
 import string
 import os
 
-tagsrc = ['img','audio','textstream']
-
-class SmallSMILHandler(ContentHandler):
-
-    def __init__(self, fichero ):
-
-        pass
+tagsrc = ['img', 'audio', 'textstream']
 
 
+class KaraokeLocal(ContentHandler):
 
+    def __init__(self, fichero):
 
+        parser = make_parser()
+        SmallSMILHandler = smallsmilhandler.SmallSMILHandler()
+        self.atributos = SmallSMILHandler.atributos
+        parser.setContentHandler(SmallSMILHandler)
+        parser.parse(fichero)
+        self.tags = SmallSMILHandler.get_tags()
 
+    def __str__(self):
+        exit = ""
+        for tag in self.tags:
+            exit += tag['etiqueta'],
+            for atributo in self.atributos[tag['etiqueta']]:
+                if tag[atributo] != "":
+                    exit += "\t" + atributo + '="' + tag[atributo] + '"',
+            exit += "\n"
+        return salida
 
-def imprimir(tags, atributos):
-
-    for tag in tags:
-        print tag['etiqueta'],
-        for atributo in atributos[tag['etiqueta']]:
-            if tag[atributo] != "":
-                print "\t" + atributo + '="' + tag[atributo]+ '"',
-        print "\n"
-
-def do_local(tags):
-    for tag in tags:
-        if tag['etiqueta'] in tagsrc:
-            link = tag["src"]
-            if link.startswith('http://'):
-                os.system("wget -q " + link)
-                link = link.split("/")[-1]
-                tag["src"] = link
+    def do_local(self):
+        for tag in self.tags:
+            if tag['etiqueta'] in tagsrc:
+                link = tag["src"]
+                if link.startswith('http://'):
+                    os.system("wget -q " + link)
+                    link = link.split("/")[-1]
+                    tag["src"] = link
 
 
 if __name__ == "__main__":
-
-    parser = make_parser()
-    SmallSMILHandler = smallsmilhandler.SmallSMILHandler()
-    parser.setContentHandler(SmallSMILHandler)
-    parser.parse(open(sys.argv[1], "r"))
-    tags = SmallSMILHandler.get_tags()
-    imprimir(tags, SmallSMILHandler.atributos)
-    do_local(tags)
-    imprimir(tags, SmallSMILHandler.atributos)
+    fichero = open(sys.argv[1], "r")
+    karaokelocal = KaraokeLocal(fichero)
+    print karaokelocal
+    karaokelocal.do_local()
+    print karaokelocal
