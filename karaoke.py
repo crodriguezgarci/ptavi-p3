@@ -7,16 +7,13 @@ from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
 import smallsmilhandler
 import sys
-import string
 import os
 
 tagsrc = ['img', 'audio', 'textstream']
 
 
 class KaraokeLocal(ContentHandler):
-
     def __init__(self, fichero):
-
         parser = make_parser()
         SmallSMILHandler = smallsmilhandler.SmallSMILHandler()
         self.atributos = SmallSMILHandler.atributos
@@ -43,7 +40,6 @@ class KaraokeLocal(ContentHandler):
                     link = link.split("/")[-1]
                     tag["src"] = link
 
-
 if __name__ == "__main__":
     try:
         fichero = open(sys.argv[1], "r")
@@ -53,5 +49,3 @@ if __name__ == "__main__":
         print karaokelocal
     except IndexError:
         print "Usage: python karaoke.py file.smil."
-
-   
