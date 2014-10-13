@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #-*- coding: UTF-8 -*-
-#Carlos Rodriguez Garcia PTAVI Practica 3 Karaoke
+#Carlos Rodriguez Garcia PTAVI Practica 3 Karaoke.
 
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
