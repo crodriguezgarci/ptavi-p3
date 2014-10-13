@@ -27,12 +27,12 @@ class KaraokeLocal(ContentHandler):
     def __str__(self):
         exit = ""
         for tag in self.tags:
-            exit += tag['etiqueta'],
+            exit += tag['etiqueta']
             for atributo in self.atributos[tag['etiqueta']]:
                 if tag[atributo] != "":
-                    exit += "\t" + atributo + '="' + tag[atributo] + '"',
+                    exit += "\t" + atributo + '="' + tag[atributo] + '"'
             exit += "\n"
-        return salida
+        return exit
 
     def do_local(self):
         for tag in self.tags:
@@ -45,8 +45,13 @@ class KaraokeLocal(ContentHandler):
 
 
 if __name__ == "__main__":
-    fichero = open(sys.argv[1], "r")
-    karaokelocal = KaraokeLocal(fichero)
-    print karaokelocal
-    karaokelocal.do_local()
-    print karaokelocal
+    try:
+        fichero = open(sys.argv[1], "r")
+        karaokelocal = KaraokeLocal(fichero)
+        print karaokelocal
+        karaokelocal.do_local()
+        print karaokelocal
+    except IndexError:
+        print "Usage: python karaoke.py file.smil."
+
+   
